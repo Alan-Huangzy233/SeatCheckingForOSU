@@ -12,7 +12,7 @@ const TERM = "202503";            // Term (e.g. YYYY+Term, eg. 202603, Fall-01, 
 const SUBJECT = "CS";             // Subject
 const COURSE_NUMBER = "123";      // Course Number
 
-// ⚠️ NEW: Course Type Mode Toggle
+// NEW: Course Type Mode Toggle
 // true  = Monitor Online courses only (Ecampus / Online)
 // false = Monitor Offline courses only (Corvallis campus in-person classes)
 const CHECK_ONLINE_ONLY = false;   
@@ -171,7 +171,7 @@ async function checkPerfectSection() {
             } else {
                 // [Offline Mode]
                 if (isOnlineCourse) return false; // If it's an online course, exclude it
-                // ⚠️ NEW: Ensure offline course sections start with "0" (Corvallis main campus)
+                // NEW: Ensure offline course sections start with "0" (Corvallis main campus)
                 if (!sectionNum.startsWith("0")) return false; 
             }
 

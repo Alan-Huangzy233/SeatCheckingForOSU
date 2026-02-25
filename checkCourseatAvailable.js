@@ -12,7 +12,7 @@ const TERM = "202603";            // 学期 (如 YYYY+Term, eg. 202603, Fall-01,
 const SUBJECT = "CS";             // 科目
 const COURSE_NUMBER = "123";      // 课号
 
-// ⚠️ 新增：课程类型模式切换
+// 新增：课程类型模式切换
 // true  = 仅监控网课 (Ecampus / Online)
 // false = 仅监控线下课 (Corvallis 本校区实体课)
 const CHECK_ONLINE_ONLY = false;   
@@ -171,7 +171,7 @@ async function checkPerfectSection() {
             } else {
                 // 【线下课模式】
                 if (isOnlineCourse) return false; // 是网课 -> 剔除
-                // ⚠️ 新增：确保线下课的 Section 是以 "0" 开头的 (即 Corvallis 主校区)
+                // 新增：确保线下课的 Section 是以 "0" 开头的 (即 Corvallis 主校区)
                 if (!sectionNum.startsWith("0")) return false; 
             }
 
