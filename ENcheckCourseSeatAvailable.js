@@ -8,9 +8,14 @@ import dotenv from "dotenv";
 dotenv.config({ path: './email_info.env' });
 
 // ================= Configuration Area =================
-const TERM = "202603";            // Term (e.g., 202603, Fall-01, Winter-02, Spring-03, Summer-04)
+const TERM = "202503";            // Term (e.g. YYYY+Term, eg. 202603, Fall-01, Winter-02, Spring-03, Summer-04)
 const SUBJECT = "CS";             // Subject
-const COURSE_NUMBER = "312";      // Course Number
+const COURSE_NUMBER = "123";      // Course Number
+
+// ⚠️ NEW: Course Type Mode Toggle
+// true  = Monitor Online courses only (Ecampus / Online)
+// false = Monitor Offline courses only (Corvallis campus in-person classes)
+const CHECK_ONLINE_ONLY = false;   
 
 // Base URL Configuration
 const BASE_URL = "https://prodapps.isadm.oregonstate.edu/StudentRegistrationSsb/ssb";
@@ -54,7 +59,7 @@ async function sendEmailAlert(subject, htmlBody) {
 // ================= Core Logic =================
 
 async function refreshSession() {
-    console.log(chalk.blue("Automatically fetching the latest Cookie and Token"));
+    console.log(chalk.blue("Fetching the latest Cookie and Token..."));
     try {
         const res = await fetch(START_URL, { headers: { "User-Agent": USER_AGENT } });
         let cookies = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : (res.headers.raw()['set-cookie'] || []);
@@ -63,7 +68,7 @@ async function refreshSession() {
         const html = await res.text();
         const tokenMatch = html.match(/name="synchronizerToken"\s+content="([^"]+)"/i) || html.match(/content="([^"]+)"\s+name="synchronizerToken"/i);
         if (tokenMatch && tokenMatch[1]) dynamicToken = tokenMatch[1];
-        else throw new Error("synchronizerToken not found in HTML.");
+        else throw new Error("synchronizerToken not found.");
 
         const termRes = await fetch(TERM_URL, {
             method: "POST",
@@ -145,27 +150,45 @@ async function fetchRestrictions(crn, isRetry = false) {
 }
 
 async function checkPerfectSection() {
+    const modeText = CHECK_ONLINE_ONLY ? "[Online]" : "[Offline]";
     try {
         const json = await fetchCourseData();
         if (!json || !json.success || !json.data) return;
 
-        // 1. Find Online courses with seats
+        // 1. Find available courses based on mode
         const availableCourses = json.data.filter(c => {
             const isOnlineSchedule = c.scheduleTypeDescription === "Online";
             const isEcampus = c.campusDescription && c.campusDescription.includes("Ecampus");
+            const isOnlineCourse = isOnlineSchedule || isEcampus;
+            
+            // Get Section number (usually sequenceNumber in Banner)
+            const sectionNum = c.sequenceNumber || ""; 
+
+            // Filter courses based on CHECK_ONLINE_ONLY flag
+            if (CHECK_ONLINE_ONLY) {
+                // [Online Mode]
+                if (!isOnlineCourse) return false; 
+            } else {
+                // [Offline Mode]
+                if (isOnlineCourse) return false; // If it's an online course, exclude it
+                // ⚠️ NEW: Ensure offline course sections start with "0" (Corvallis main campus)
+                if (!sectionNum.startsWith("0")) return false; 
+            }
+
+            // (If you only want real seats and not waitlist, remove || c.waitAvailable > 0)
             const hasSeats = c.seatsAvailable > 0 || c.waitAvailable > 0; 
-            return (isOnlineSchedule || isEcampus) && hasSeats;
+            return hasSeats;
         });
 
         if (availableCourses.length === 0) {
-            console.log(chalk.gray(`[${new Date().toLocaleTimeString()}] Scanning ${SUBJECT} ${COURSE_NUMBER}, no available Online sections found...`));
+            console.log(chalk.gray(`[${new Date().toLocaleTimeString()}] Scanning ${SUBJECT} ${COURSE_NUMBER} ${modeText}, no available seats...`));
             return;
         }
 
-        // 2. Filter courses further by checking the Restriction Blacklist
+        // 2. Further check restrictions for available courses (Blacklist mode)
         const perfectCourses = [];
         
-        // Any course containing these keywords in its restriction HTML will be skipped
+        // If any of the following keywords appear in the HTML, the course will be blocked
         const restrictionBlacklist = [
             "Dist. Degree Corvallis Student(DSC)",
             "Oregon State - Corvallis (C)"
@@ -179,23 +202,23 @@ async function checkPerfectSection() {
                 for (const keyword of restrictionBlacklist) {
                     if (html.includes(keyword)) {
                         foundRestriction = keyword;
-                        break; // Stop checking if one restriction is found
+                        break; // Hit blacklist, break loop
                     }
                 }
 
                 if (!foundRestriction) {
-                    perfectCourses.push(course); // Seats + No restrictions!
+                    perfectCourses.push(course); // Has seats AND no blacklist restrictions!
                 } else {
-                    console.log(chalk.yellow(`CRN ${course.courseReferenceNumber} has seats, but blocked by restriction: "${foundRestriction}".`));
+                    console.log(chalk.yellow(`CRN ${course.courseReferenceNumber} has seats, but blocked: Detected "${foundRestriction}"`));
                 }
             } catch (err) {
                 console.error(chalk.red(`Failed to fetch restrictions for CRN ${course.courseReferenceNumber}: ${err.message}`));
             }
         }
 
-        // 3. Send email if there are perfect matches
+        // 3. Finally, send email
         if (perfectCourses.length > 0) {
-            console.log(chalk.green(`Found ${perfectCourses.length} perfect option(s) (Seats available + No restrictions)!`));
+            console.log(chalk.green(`Found ${perfectCourses.length} perfect ${modeText} option(s) (Available seats + No restrictions)!`));
 
             let detailsHtml = perfectCourses.map(c => `
                 <li style="margin-bottom: 10px;">
@@ -207,12 +230,12 @@ async function checkPerfectSection() {
                 </li>
             `).join("");
 
-            const subject = `Unrestricted & Open section for ${SUBJECT} ${COURSE_NUMBER}`;
+            const subject = `Found open and unrestricted ${SUBJECT} ${COURSE_NUMBER} ${modeText}`;
             const body = `
-                <h2>Found open & unrestricted Online sections for ${SUBJECT} ${COURSE_NUMBER}</h2>
-                <p>The following section(s) have available seats and <b>NO DSC or Corvallis Campus restrictions</b> detected:</p>
+                <h2>Found immediately available ${modeText} sections for ${SUBJECT} ${COURSE_NUMBER}</h2>
+                <p>The following section(s) have open seats and <b>NO DSC or Corvallis campus restrictions detected</b>:</p>
                 <ul>${detailsHtml}</ul>
-                <p>Please log in to register immediately!</p>
+                <p>Please register as soon as possible!</p>
             `;
             await sendEmailAlert(subject, body);
         }
@@ -224,7 +247,8 @@ async function checkPerfectSection() {
 
 // ================= Program Initialization =================
 (async () => {
-    console.log(chalk.cyan(`Starting comprehensive monitoring (Seats + DSC/Campus Restrictions)...`));
+    const modeText = CHECK_ONLINE_ONLY ? "[Online]" : "[Offline]";
+    console.log(chalk.cyan(`Starting comprehensive monitoring for ${SUBJECT} ${COURSE_NUMBER} ${modeText} (Seats + DSC/Campus Restrictions)...`));
     await refreshSession();
     await checkPerfectSection();
     setInterval(checkPerfectSection, 15_000); 

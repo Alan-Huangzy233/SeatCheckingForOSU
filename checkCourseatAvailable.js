@@ -8,9 +8,14 @@ import dotenv from "dotenv";
 dotenv.config({ path: './email_info.env' });
 
 // ================= 配置区域 =================
-const TERM = "202503";            // 学期 (如 YYYY+Term, eg. 202603, Fall-01, Winter-02, Spring-03, Summer-04)
+const TERM = "202603";            // 学期 (如 YYYY+Term, eg. 202603, Fall-01, Winter-02, Spring-03, Summer-04)
 const SUBJECT = "CS";             // 科目
-const COURSE_NUMBER = "312";      // 课号
+const COURSE_NUMBER = "123";      // 课号
+
+// ⚠️ 新增：课程类型模式切换
+// true  = 仅监控网课 (Ecampus / Online)
+// false = 仅监控线下课 (Corvallis 本校区实体课)
+const CHECK_ONLINE_ONLY = false;   
 
 // 基础 URL 配置
 const BASE_URL = "https://prodapps.isadm.oregonstate.edu/StudentRegistrationSsb/ssb";
@@ -145,20 +150,38 @@ async function fetchRestrictions(crn, isRetry = false) {
 }
 
 async function checkPerfectSection() {
+    const modeText = CHECK_ONLINE_ONLY ? "【网课】" : "【线下课】";
     try {
         const json = await fetchCourseData();
         if (!json || !json.success || !json.data) return;
 
-        // 1. 寻找有座位的 Online 课
+        // 1. 根据模式寻找有座位的课
         const availableCourses = json.data.filter(c => {
             const isOnlineSchedule = c.scheduleTypeDescription === "Online";
             const isEcampus = c.campusDescription && c.campusDescription.includes("Ecampus");
+            const isOnlineCourse = isOnlineSchedule || isEcampus;
+            
+            // 获取 Section 编号 (Banner 系统中通常叫 sequenceNumber)
+            const sectionNum = c.sequenceNumber || ""; 
+
+            // 根据 CHECK_ONLINE_ONLY 标志过滤课程
+            if (CHECK_ONLINE_ONLY) {
+                // 【网课模式】
+                if (!isOnlineCourse) return false; 
+            } else {
+                // 【线下课模式】
+                if (isOnlineCourse) return false; // 是网课 -> 剔除
+                // ⚠️ 新增：确保线下课的 Section 是以 "0" 开头的 (即 Corvallis 主校区)
+                if (!sectionNum.startsWith("0")) return false; 
+            }
+
+            // (如果你只想查真实座位，不想查 Waitlist，可以把后面的 || c.waitAvailable > 0 删掉)
             const hasSeats = c.seatsAvailable > 0 || c.waitAvailable > 0; 
-            return (isOnlineSchedule || isEcampus) && hasSeats;
+            return hasSeats;
         });
 
         if (availableCourses.length === 0) {
-            console.log(chalk.gray(`[${new Date().toLocaleTimeString()}] 扫描 ${SUBJECT} ${COURSE_NUMBER}，暂无【有空位】的 Online 选项...`));
+            console.log(chalk.gray(`[${new Date().toLocaleTimeString()}] 扫描 ${SUBJECT} ${COURSE_NUMBER} ${modeText}，暂无空位...`));
             return;
         }
 
@@ -195,7 +218,7 @@ async function checkPerfectSection() {
 
         // 3. 最终发送邮件
         if (perfectCourses.length > 0) {
-            console.log(chalk.green(`发现 ${perfectCourses.length} 个【有空位且无任何限制】的完美选项！`));
+            console.log(chalk.green(`发现 ${perfectCourses.length} 个【有空位且无任何限制】的完美 ${modeText} 选项！`));
 
             let detailsHtml = perfectCourses.map(c => `
                 <li style="margin-bottom: 10px;">
@@ -207,9 +230,9 @@ async function checkPerfectSection() {
                 </li>
             `).join("");
 
-            const subject = `发现无限制且有空位的 ${SUBJECT} ${COURSE_NUMBER}`;
+            const subject = `发现无限制且有空位的 ${SUBJECT} ${COURSE_NUMBER} ${modeText}`;
             const body = `
-                <h2>${SUBJECT} ${COURSE_NUMBER} 发现了可以立刻选的 Online 课程</h2>
+                <h2>${SUBJECT} ${COURSE_NUMBER} 发现了可以立刻选的 ${modeText} 选项</h2>
                 <p>以下 Section 既有空位，也<b>未检测到 DSC 或 Corvallis 本校区限制</b>：</p>
                 <ul>${detailsHtml}</ul>
                 <p>请尽快注册！</p>
@@ -224,7 +247,8 @@ async function checkPerfectSection() {
 
 // ================= 启动程序 =================
 (async () => {
-    console.log(chalk.cyan(`开始综合监控 (空位 + DSC/Campus 限制)...`));
+    const modeText = CHECK_ONLINE_ONLY ? "【网课】" : "【线下课】";
+    console.log(chalk.cyan(`开始综合监控 ${SUBJECT} ${COURSE_NUMBER} ${modeText} (空位 + DSC/Campus 限制)...`));
     await refreshSession();
     await checkPerfectSection();
     setInterval(checkPerfectSection, 15_000); 
