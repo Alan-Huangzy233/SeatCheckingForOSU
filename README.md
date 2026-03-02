@@ -1,4 +1,4 @@
-# OSU Course Monitor (OSU 选课与空位监控脚本)
+# OSU Course Monitor (OSU 选课空位监控脚本)
 
 [English Version Below](#english-version)
 
