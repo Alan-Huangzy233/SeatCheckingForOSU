@@ -58,7 +58,7 @@ MAIL_TO=[替换为接收提醒的邮箱]@xxx.com
 const TERM = "202603";
 
 // 科目简称: SUBJECT = "CS";
-// 课号: COURSE_NUMBER = "312";
+// 课号: COURSE_NUMBER = "123";
 // 模式切换
 // true  = 仅监控网课 (Ecampus)
 // false = 仅监控线下课 (Corvallis 本校区)
@@ -145,7 +145,7 @@ Open the main script file (e.g., `checkOnlineAvailability_Full.js`) and modify t
 const TERM = "202603";
 
 // Subject code: SUBJECT = "CS";
-// Course number: COURSE_NUMBER = "312";
+// Course number: COURSE_NUMBER = "123";
 // Mode Toggle
 // true  = Monitor Online courses only (Ecampus)
 // false = Monitor Offline courses only (Corvallis main campus)
