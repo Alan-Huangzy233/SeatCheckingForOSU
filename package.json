@@ -1,0 +1,16 @@
+{
+  "name": "seatcheckingforosu",
+  "version": "1.0.0",
+  "description": "OSU Course Seat Availability Monitor",
+  "main": "checkCourseatAvailable.js",
+  "type": "module",
+  "scripts": {
+    "start": "node checkCourseatAvailable.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.0",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.10"
+  }
+}
