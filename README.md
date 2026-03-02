@@ -54,17 +54,17 @@ MAIL_TO=[替换为接收提醒的邮箱]@xxx.com
 
 ```javascript
 // ================= 配置区域 =================
-const TERM = "202603";
 // 学期代码 (如 Fall 2026 为 202601，Winter 2026 为 202602，Spring 2026 为 202603，Summer 2026 为 202604) 
-const COURSES_TO_MONITOR = [
-    { subject: "CS", courseNumber: "123", checkOnlineOnly: false },
-    { subject: "CS", courseNumber: "456", checkOnlineOnly: true },
+const TERM = "202603";
 
-// 科目简称 SUBJECT = "CS";
-// 课号 COURSE_NUMBER = "312";
+// 科目简称: SUBJECT = "CS";
+// 课号: COURSE_NUMBER = "312";
 // 模式切换
 // true  = 仅监控网课 (Ecampus)
 // false = 仅监控线下课 (Corvallis 本校区)
+const COURSES_TO_MONITOR = [
+    { subject: "CS", courseNumber: "123", checkOnlineOnly: false },
+    { subject: "CS", courseNumber: "456", checkOnlineOnly: true },
 ];
 // ===========================================
 ```
@@ -141,18 +141,18 @@ Open the main script file (e.g., `checkOnlineAvailability_Full.js`) and modify t
 
 ```javascript
 // ================= Configuration Area =================
-const TERM = "202603";
-
 // Term code (e.g., Fall 2026 is 202601，Winter 2026 is 202602，Spring 2026 is 202603，Summer 2026 is 202604) 
-const COURSES_TO_MONITOR = [
-    { subject: "CS", courseNumber: "123", checkOnlineOnly: false },
-    { subject: "CS", courseNumber: "456", checkOnlineOnly: true },
+const TERM = "202603";
 
 // Subject code: SUBJECT = "CS";
 // Course number: COURSE_NUMBER = "312";
 // Mode Toggle
 // true  = Monitor Online courses only (Ecampus)
 // false = Monitor Offline courses only (Corvallis main campus)
+const COURSES_TO_MONITOR = [
+    { subject: "CS", courseNumber: "123", checkOnlineOnly: false },
+    { subject: "CS", courseNumber: "456", checkOnlineOnly: true },
+
 ];
 // ======================================================
 ```
