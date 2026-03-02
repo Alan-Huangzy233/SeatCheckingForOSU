@@ -18,7 +18,7 @@
 ## 快速开始 (Getting Started)
 
 ### 1. 环境依赖 (Prerequisites)
-* 安装 [Node.js](https://nodejs.org/) (推荐 v16 以上版本)
+* 安装 [Node.js](https://nodejs.org/zh-cn/download) (推荐 v16 以上版本)
 * 一个用于发送提醒的邮箱账号（推荐使用 Gmail）
 
 ### 2. 安装 (Installation)
@@ -101,7 +101,7 @@ An automated course registration monitoring tool designed for Oregon State Unive
 ## Getting Started
 
 ### 1. Prerequisites
-* [Node.js](https://nodejs.org/) (v16 or higher recommended)
+* [Node.js](https://nodejs.org/en/download) (v16 or higher recommended)
 * An email account used to send the alerts (Gmail is highly recommended)
 
 ### 2. Installation
