@@ -11,7 +11,7 @@
   * **网课模式:** 仅监控 Ecampus/Online 课程。
   * **线下课模式:** 仅监控 Corvallis 本校区实体课（自动过滤非 0 开头的 Section，如 Cascades 校区课程）。
 * **限制查询 (Restriction Check):** 不仅查空位，还会自动爬取并分析限制页面。如果该课程包含 `Dist. Degree Corvallis Student(DSC)` 或 `Oregon State - Corvallis (C)` 限制，脚本会自动拦截假阳性提醒。
-* **邮件提醒 (Email Alerts):** 发现完美选课机会后，第一时间发送带有详细 CRN 和座位信息的邮件。
+* **邮件提醒 (Email Alerts):** 发现目标课程有空位后，第一时间发送带有详细 CRN 和座位信息的邮件。
 
 ---
 
@@ -94,7 +94,7 @@ An automated course registration monitoring tool designed for Oregon State Unive
   * **Online Mode:** Monitors only Ecampus/Online courses.
   * **Offline Mode:** Monitors only Corvallis main campus in-person classes (automatically filters out non-`0` starting sections to exclude Cascades campus courses).
 * **Restriction Check:** Goes beyond simply checking seat counts by automatically crawling and analyzing the restrictions page. If the course contains `Dist. Degree Corvallis Student(DSC)` or `Oregon State - Corvallis (C)` restrictions, the script will block the notification to prevent false-positive alerts.
-* **Email Alerts:** Sends an email with detailed CRN and seat information immediately upon finding a perfect, registerable section.
+* **Email Alerts:** Sends an email with detailed CRN and seat information immediately upon it is discovered that there are vacancies in the target course.
 
 ---
 
