@@ -24,13 +24,6 @@
 [可点击这里下载程序压缩包](https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip)
 或者访问(https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip) 进行下载。
 
-### 步骤 2：准备邮箱授权码 (Prerequisite)
-程序会自动帮你搞定所有运行环境，你唯一需要准备的是一个用来发邮件的 Gmail 账号。
-由于 Google 的安全政策，你不能直接使用邮箱的日常登录密码。请提前准备好 16 位的**应用专用密码 (App Password)**：
-1. 前往 Google 账号安全设置：[点击这里 (Security)](https://myaccount.google.com/intro/security)，开启**“两步验证 (2-Step Verification)”**。
-2. 前往应用专用密码页面：[点击这里 (App Passwords)](https://myaccount.google.com/apppasswords)。
-3. 生成一个 16 位的 App Password，将其**复制保存**，稍后运行程序时会用到。
-
 请根据你的操作系统直接运行：
 
 **对于 Windows 用户：**
@@ -45,6 +38,15 @@ bash start.sh
 ```
 
 *(注：如果你的电脑没有 Node.js，该脚本会自动通过 nvm 下载并配置好最新环境！)*
+### 步骤 2：准备邮箱授权码 (Prerequisite)
+程序会自动帮你搞定所有运行环境，你唯一需要准备的是一个用来发邮件的 Gmail 账号。
+同时程序也会指引你完成以下步骤：
+由于 Google 的安全政策，你不能直接使用邮箱的日常登录密码。请提前准备好 16 位的**应用专用密码 (App Password)**：
+1. 前往 Google 账号安全设置：[点击这里 (Security)](https://myaccount.google.com/intro/security)，开启**“两步验证 (2-Step Verification)”**。
+2. 前往应用专用密码页面：[点击这里 (App Passwords)](https://myaccount.google.com/apppasswords)。
+3. 生成一个 16 位的 App Password，将其**复制保存**，稍后运行程序时会用到。
+
+
 
 ### 步骤 3：跟着提示走！
 运行脚本后，请选择界面语言。如果是首次运行，程序会：
@@ -84,14 +86,7 @@ An automated course registration monitoring tool designed for Oregon State Unive
 
 ## Getting Started
 
-### Step 1: Get your Gmail App Password
-The script will handle all environment setups for you. The only thing you need is a Gmail account to send the alerts.
-Due to Google's security policies, you cannot use your regular account password. You must generate a 16-digit App Password beforehand:
-1. Go to your Google Account Security: [Click here](https://myaccount.google.com/intro/security) and ensure **"2-Step Verification"** is turned on.
-2. Go to App Passwords: [Click here](https://myaccount.google.com/apppasswords).
-3. Generate a 16-digit App Password. **Copy it**, you will need to paste it when you run the script.
-
-### Step 2: Download and Run
+### Step 1: Download and Run
 Download or clone this repository and extract it.
 [You can click here to download the ZIP file](https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip)
 
@@ -111,6 +106,15 @@ bash start.sh
 ```
 
 *(Note: If Node.js is missing, the script will automatically install and configure it via nvm for you!)*
+
+### Step 2: Get your Gmail App Password
+The script will handle all environment setups for you. The only thing you need is a Gmail account to send the alerts.
+
+Meanwhile, the start program also contain the following step to guiding you finish your setup.
+Due to Google's security policies, you cannot use your regular account password. You must generate a 16-digit App Password beforehand:
+1. Go to your Google Account Security: [Click here](https://myaccount.google.com/intro/security) and ensure **"2-Step Verification"** is turned on.
+2. Go to App Passwords: [Click here](https://myaccount.google.com/apppasswords).
+3. Generate a 16-digit App Password. **Copy it**, you will need to paste it when you run the script.
 
 ### Step 3: Follow the Prompts!
 After launching the script, select your language. On the first run, the tool will:
