@@ -27,7 +27,11 @@
 3. 生成一个 16 位的 App Password，将其**复制保存**，稍后运行程序时会用到。
 
 ### 步骤 2：下载并运行 (Run the Script)
-将本项目下载或克隆到本地并解压。请根据你的操作系统直接运行：
+将本项目下载或克隆到本地并解压。
+[可点击这里下载程序压缩包](https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip)
+或者访问(https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip) 进行下载。
+
+请根据你的操作系统直接运行：
 
 **对于 Windows 用户：**
 直接双击文件夹中的 `start.bat` 文件。
@@ -88,7 +92,12 @@ Due to Google's security policies, you cannot use your regular account password.
 3. Generate a 16-digit App Password. **Copy it**, you will need to paste it when you run the script.
 
 ### Step 2: Download and Run
-Download or clone this repository and extract it. Run the tool based on your OS:
+Download or clone this repository and extract it.
+[You can click here to download the ZIP file](https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip)
+
+Or visit (https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip) to download the ZIP file.
+
+Run the tool based on your OS:
 
 **For Windows Users:**
 Simply double-click the `start.bat` file in the folder.
