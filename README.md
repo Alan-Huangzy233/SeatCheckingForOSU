@@ -19,17 +19,17 @@
 
 ## 快速开始 (Getting Started)
 
-### 步骤 1：准备邮箱授权码 (Prerequisite)
+### 步骤 1：下载并运行 (Run the Script)
+将本项目下载或克隆到本地并解压。
+[可点击这里下载程序压缩包](https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip)
+或者访问(https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip) 进行下载。
+
+### 步骤 2：准备邮箱授权码 (Prerequisite)
 程序会自动帮你搞定所有运行环境，你唯一需要准备的是一个用来发邮件的 Gmail 账号。
 由于 Google 的安全政策，你不能直接使用邮箱的日常登录密码。请提前准备好 16 位的**应用专用密码 (App Password)**：
 1. 前往 Google 账号安全设置：[点击这里 (Security)](https://myaccount.google.com/intro/security)，开启**“两步验证 (2-Step Verification)”**。
 2. 前往应用专用密码页面：[点击这里 (App Passwords)](https://myaccount.google.com/apppasswords)。
 3. 生成一个 16 位的 App Password，将其**复制保存**，稍后运行程序时会用到。
-
-### 步骤 2：下载并运行 (Run the Script)
-将本项目下载或克隆到本地并解压。
-[可点击这里下载程序压缩包](https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip)
-或者访问(https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip) 进行下载。
 
 请根据你的操作系统直接运行：
 
