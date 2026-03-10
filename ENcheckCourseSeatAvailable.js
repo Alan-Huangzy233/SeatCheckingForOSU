@@ -29,6 +29,16 @@ const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 
 let dynamicCookie = "";
 let dynamicToken = "";
+let lastRefreshTime = 0; // NEW: Tracks the last time the token was refreshed
+
+// ================= UTILITY FUNCTIONS =================
+// Get formatted Pacific Time
+function getPacificTime() {
+    return new Date().toLocaleString("en-US", { 
+        timeZone: "America/Los_Angeles", 
+        hour12: false 
+    });
+}
 
 // ================= EMAIL CONFIGURATION =================
 const transporter = nodemailer.createTransport({
@@ -47,23 +57,23 @@ async function sendEmailAlert(courseKey, subject, htmlBody) {
     const lastTS = lastMailTSMap.get(courseKey) || 0;
     
     if (now - lastTS < COOLDOWN_MS) {
-        console.log(chalk.blue(`[${courseKey}] Cooldown: Only ${((now - lastTS) / 1000).toFixed(1)}s since last email alert.`));
+        console.log(chalk.blue(`[${getPacificTime()}] [${courseKey}] Cooldown: Only ${((now - lastTS) / 1000).toFixed(1)}s since last email alert.`));
         return;
     }
     
     try {
         const info = await transporter.sendMail({ from: process.env.MAIL_FROM, to: process.env.MAIL_TO, subject, html: htmlBody });
         lastMailTSMap.set(courseKey, now); // Record the send time for this specific course
-        console.log(chalk.green(`[${courseKey}] Alert email sent, MessageID: ${info.messageId}`));
+        console.log(chalk.green(`[${getPacificTime()}] [${courseKey}] Alert email sent, MessageID: ${info.messageId}`));
     } catch (err) {
-        console.error(chalk.red(`[${courseKey}] Failed to send email: ${err.message}`));
+        console.error(chalk.red(`[${getPacificTime()}] [${courseKey}] Failed to send email: ${err.message}`));
     }
 }
 
 // ================= CORE LOGIC =================
 
 async function refreshSession() {
-    console.log(chalk.blue("Fetching latest Cookie and Token..."));
+    console.log(chalk.blue(`[${getPacificTime()}] Fetching latest Cookie and Token...`));
     try {
         const res = await fetch(START_URL, { headers: { "User-Agent": USER_AGENT } });
         let cookies = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : (res.headers.raw()['set-cookie'] || []);
@@ -85,9 +95,11 @@ async function refreshSession() {
         });
 
         if (!termRes.ok) throw new Error(`Failed to bind term: ${termRes.status}`);
-        console.log(chalk.green(`Session initialized successfully! Token: ${dynamicToken.substring(0, 8)}...`));
+        
+        lastRefreshTime = Date.now(); // Update the last refresh timestamp
+        console.log(chalk.green(`[${getPacificTime()}] Session initialized successfully! Token: ${dynamicToken.substring(0, 8)}...`));
     } catch (e) {
-        console.error(chalk.red(`Failed to auto-fetch credentials: ${e.message}`));
+        console.error(chalk.red(`[${getPacificTime()}] Failed to auto-fetch credentials: ${e.message}`));
     }
 }
 
@@ -182,7 +194,7 @@ async function checkPerfectSection(course) {
         });
 
         if (availableCourses.length === 0) {
-            console.log(chalk.gray(`[${new Date().toLocaleTimeString()}] Scanning ${subject} ${courseNumber} ${modeText}... No seats available currently.`));
+            console.log(chalk.gray(`[${getPacificTime()}] Scanning ${subject} ${courseNumber} ${modeText}... No seats available currently.`));
             return;
         }
 
@@ -206,15 +218,15 @@ async function checkPerfectSection(course) {
                 if (!foundRestriction) {
                     perfectCourses.push(c);
                 } else {
-                    console.log(chalk.yellow(`[${subject} ${courseNumber}] CRN ${c.courseReferenceNumber} has seats, but was blocked: Detected "${foundRestriction}" restriction.`));
+                    console.log(chalk.yellow(`[${getPacificTime()}] [${subject} ${courseNumber}] CRN ${c.courseReferenceNumber} has seats, but was blocked: Detected "${foundRestriction}" restriction.`));
                 }
             } catch (err) {
-                console.error(chalk.red(`Failed to fetch restrictions for CRN ${c.courseReferenceNumber}: ${err.message}`));
+                console.error(chalk.red(`[${getPacificTime()}] Failed to fetch restrictions for CRN ${c.courseReferenceNumber}: ${err.message}`));
             }
         }
 
         if (perfectCourses.length > 0) {
-            console.log(chalk.green(`[${subject} ${courseNumber}] Found ${perfectCourses.length} perfect ${modeText} option(s) with available seats and NO restrictions!`));
+            console.log(chalk.green(`[${getPacificTime()}] [${subject} ${courseNumber}] Found ${perfectCourses.length} perfect ${modeText} option(s) with available seats and NO restrictions!`));
 
             let detailsHtml = perfectCourses.map(c => `
                 <li style="margin-bottom: 10px;">
@@ -237,13 +249,19 @@ async function checkPerfectSection(course) {
         }
 
     } catch (error) {
-        console.error(chalk.red(`[${subject} ${courseNumber}] Scan encountered an error: ${error.message}`));
+        console.error(chalk.red(`[${getPacificTime()}] [${subject} ${courseNumber}] Scan encountered an error: ${error.message}`));
     }
 }
 
 // Sequentially poll all courses
 async function monitorAllCourses() {
-    console.log(chalk.cyan(`\n--- Starting a new full scan (${new Date().toLocaleTimeString()}) ---`));
+    // 1. Proactively refresh the Token every 5 minutes (300,000 ms)
+    if (Date.now() - lastRefreshTime >= 300_000) {
+        console.log(chalk.magenta(`[${getPacificTime()}] 5 minutes have passed since last refresh. Proactively refreshing session...`));
+        await refreshSession();
+    }
+
+    console.log(chalk.cyan(`\n--- Starting a new full scan (${getPacificTime()}) ---`));
     
     for (const course of COURSES_TO_MONITOR) {
         await checkPerfectSection(course);
@@ -258,8 +276,8 @@ async function monitorAllCourses() {
 
 // ================= START PROGRAM =================
 (async () => {
-    console.log(chalk.blue("Disclaimer: This program is for educational and research purposes only. Do not use for any commercial or illegal activities."));
-    console.log(chalk.magenta(`Starting multi-course monitor... Monitoring ${COURSES_TO_MONITOR.length} course(s) in total.`));
+    console.log(chalk.blue(`[${getPacificTime()}] Disclaimer: This program is for educational and research purposes only. Do not use for any commercial or illegal activities.`));
+    console.log(chalk.magenta(`[${getPacificTime()}] Starting multi-course monitor... Monitoring ${COURSES_TO_MONITOR.length} course(s) in total.`));
     await refreshSession();
     await monitorAllCourses(); 
 })();
