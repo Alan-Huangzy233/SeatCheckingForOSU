@@ -6,7 +6,7 @@
 
 ---
 
-## 介绍太多看不明白？没关系！Windows用户直接点这个下载，解压，双击start.bat就好！
+## 介绍太多看不明白？没关系！Windows用户直接点这个下载，解压，双击win-start.bat就好！
 [可点击这里下载程序压缩包](https://github.com/Alan-Huangzy233/SeatCheckingForOSU/releases/download/SeatChecking-V1/SeatCheckingForOSU.zip)
 
 ---
@@ -34,14 +34,14 @@
 请根据你的操作系统直接运行：
 
 **对于 Windows 用户：**
-直接双击文件夹中的 `start.bat` 文件。
+直接双击文件夹中的 `win-start.bat` 文件。
 *(如果弹出 Windows 保护提示，请点击“更多信息” -> “仍要运行”)*
 
 **对于 macOS 和 Linux 用户：**
 打开“终端 (Terminal)”，使用 `cd` 命令进入本项目的文件夹，然后直接输入以下命令并回车：
 
 ```bash
-bash start.sh
+bash linux-mac-start.sh
 ```
 
 *(注：如果你的电脑没有 Node.js，该脚本会自动通过 nvm 下载并配置好最新环境！)*
