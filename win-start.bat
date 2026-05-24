@@ -67,13 +67,13 @@ goto MENU
 :RUN_CN
 echo.
 echo 正在启动中文版监控程序...
-node checkCourseatAvailable.js
+node allInOne.js
 goto END
 
 :RUN_EN
 echo.
 echo Starting English version monitor...
-node ENcheckCourseSeatAvailable.js
+node ENallInOne.js
 goto END
 
 :EXIT_PROG
