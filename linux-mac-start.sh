@@ -60,17 +60,16 @@ while true; do
 
     if [ "$choice" == "1" ]; then
         echo -e "\n\033[32m正在启动中文版监控程序...\033[0m"
-        node checkCourseatAvailable.js
-        break  # 执行完毕后跳出循环
+        node allInOne.js
+        break
     elif [ "$choice" == "2" ]; then
         echo -e "\n\033[32mStarting English version monitor...\033[0m"
-        node ENcheckCourseSeatAvailable.js
-        break  # 执行完毕后跳出循环
+        node ENallInOne.js
+        break
     elif [ "$choice" == "3" ]; then
         echo -e "\n\033[33m已退出程序。(Program exited.)\033[0m"
-        exit 0 # 正常退出脚本
+        exit 0
     else
-        # 输错时打印红字错误提示，不执行 break，循环会重新开始
         echo -e "\n\033[31m[错误] 输入无效，请重新输入。(Invalid input, please try again.)\033[0m\n"
     fi
 done
